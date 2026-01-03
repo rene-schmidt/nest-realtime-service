@@ -1,6 +1,8 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { ChannelKey, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+
+type ChannelKey = 'general' | 'support';
+
 
 @Injectable()
 export class MessagesService {
