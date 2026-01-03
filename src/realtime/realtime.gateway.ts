@@ -6,11 +6,15 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ChannelKey } from '@prisma/client';
 import * as jwt from 'jsonwebtoken';
 import { MessagesService } from '../messages/messages.service';
 
+/**
+ * Realtime-Service soll NICHT von Prisma Enums abhängen.
+ * Channel + Role kommen aus App-Logik/JWT.
+ */
 type Role = 'USER' | 'ADMIN';
+type ChannelKey = 'general' | 'support';
 
 type WsUser = {
   id: string;
@@ -94,13 +98,13 @@ export class RealtimeGateway {
   @SubscribeMessage('channel.join')
   async join(
     @ConnectedSocket() client: Socket,
-    @MessageBody() body: { channel: 'general' | 'support' },
+    @MessageBody() body: { channel: ChannelKey },
   ) {
     try {
       const user = this.getUserOrFail(client);
       if (!user) return { ok: false, error: 'UNAUTHORIZED' };
 
-      const channelKey = body.channel as ChannelKey;
+      const channelKey = body.channel;
 
       this.messages.assertChannelAccess(channelKey, user.role);
 
@@ -114,13 +118,13 @@ export class RealtimeGateway {
   @SubscribeMessage('message.send')
   async send(
     @ConnectedSocket() client: Socket,
-    @MessageBody() body: { channel: 'general' | 'support'; content: string },
+    @MessageBody() body: { channel: ChannelKey; content: string },
   ) {
     try {
       const user = this.getUserOrFail(client);
       if (!user) return { ok: false, error: 'UNAUTHORIZED' };
 
-      const channelKey = body.channel as ChannelKey;
+      const channelKey = body.channel;
 
       this.messages.assertChannelAccess(channelKey, user.role);
 
