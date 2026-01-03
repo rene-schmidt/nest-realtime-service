@@ -6,12 +6,17 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ChannelKey, Role } from '@prisma/client';
+import { ChannelKey } from '@prisma/client';
 import * as jwt from 'jsonwebtoken';
 import { MessagesService } from '../messages/messages.service';
 
-type WsUser = { id: string; email?: string; role: Role };
+type Role = 'USER' | 'ADMIN';
 
+type WsUser = {
+  id: string;
+  email?: string;
+  role: Role;
+};
 
 @WebSocketGateway({ cors: { origin: true } })
 export class RealtimeGateway {
@@ -21,7 +26,6 @@ export class RealtimeGateway {
   constructor(private readonly messages: MessagesService) {}
 
   handleConnection(client: Socket) {
-
     const token =
       client.handshake.auth?.token ||
       this.extractBearer(client.handshake.headers.authorization);
@@ -43,13 +47,18 @@ export class RealtimeGateway {
     try {
       const payload = jwt.verify(token, secret) as any;
 
+      const role: Role =
+        payload.role === 'ADMIN' || payload.role === 'USER'
+          ? payload.role
+          : 'USER';
+
       const user: WsUser = {
         id: payload.sub,
         email: payload.email,
-        role: payload.role as Role,
+        role,
       };
 
-      if (!user.id || !user.role) {
+      if (!user.id) {
         client.data.user = undefined;
         client.emit('auth.error', { error: 'Invalid token payload' });
         return;
@@ -59,13 +68,13 @@ export class RealtimeGateway {
       client.emit('auth.ok', { id: user.id, role: user.role });
     } catch (e: any) {
       client.data.user = undefined;
-      client.emit('auth.error', { error: `JWT verify failed: ${e?.message ?? 'unknown'}` });
+      client.emit('auth.error', {
+        error: `JWT verify failed: ${e?.message ?? 'unknown'}`,
+      });
     }
   }
 
-  handleDisconnect(_client: Socket) {
-    
-  }
+  handleDisconnect(_client: Socket) {}
 
   private extractBearer(auth?: unknown): string | undefined {
     const v = typeof auth === 'string' ? auth : undefined;
@@ -133,7 +142,4 @@ export class RealtimeGateway {
       return { ok: false, error: e?.message ?? 'SEND_FAILED' };
     }
   }
-  
 }
-
-
