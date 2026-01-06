@@ -1,19 +1,15 @@
-/**
- * Prisma Client generator configuration.
- *
- * Defines how Prisma generates the type-safe database client used by the app.
- */
+/// Prisma Client generator configuration.
+///
+/// Defines how Prisma generates the type-safe database client used by the app.
 generator client {
   // Use the official Prisma JS/TS client generator
   provider = "prisma-client-js"
 }
 
-/**
- * Database connection configuration.
- *
- * Uses PostgreSQL and reads the connection string from the `DATABASE_URL`
- * environment variable.
- */
+/// Database connection configuration.
+///
+/// Uses PostgreSQL and reads the connection string from the `DATABASE_URL`
+/// environment variable.
 datasource db {
   // Target database provider
   provider = "postgresql"
@@ -22,12 +18,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/**
- * Application user roles persisted in the database.
- *
- * Note: The realtime layer may choose to define roles independently
- * to avoid coupling to persistence-specific enums.
- */
+/// Application user roles persisted in the database.
+///
+/// Note: The realtime layer may choose to define roles independently
+/// to avoid coupling to persistence-specific enums.
 enum Role {
   // Administrative role with elevated permissions
   ADMIN
@@ -36,9 +30,7 @@ enum Role {
   USER
 }
 
-/**
- * Supported message channels persisted in the database.
- */
+/// Supported message channels persisted in the database.
 enum ChannelKey {
   // Public/default channel
   general
@@ -47,11 +39,9 @@ enum ChannelKey {
   support
 }
 
-/**
- * Message entity stored in the database.
- *
- * Represents a single message posted into a channel.
- */
+/// Message entity stored in the database.
+///
+/// Represents a single message posted into a channel.
 model Message {
   /// Primary key (generated as a CUID string)
   id         String     @id @default(cuid())
