@@ -1,98 +1,312 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 💬 NestJS Realtime Messaging API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A production-ready **NestJS** backend providing **realtime messaging** via **WebSockets (Socket.IO)** and a **REST API**, backed by **PostgreSQL** and **Prisma ORM**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project demonstrates a clean and scalable architecture for building **chat / messaging systems** with:
+- JWT-based authentication
+- Channel-based access control
+- Realtime message delivery
+- Persistent message storage
+- Admin moderation capabilities
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🟢 Live Demo
 
-## Project setup
+You can try the realtime messaging system in action here:
 
-```bash
-$ npm install
+👉 **Live Demo:** https://rscoding.dev/projects/nestjs/demo
+
+The demo showcases:
+- Realtime messaging via WebSockets (Socket.IO)
+- JWT-based authentication
+- Channel access control (`general` / `support`)
+- Message persistence and live updates
+
+> Note: Some features (e.g. admin actions) may require an ADMIN account.
+
+---
+
+## 🚀 Features
+
+### 🔐 Authentication
+- JWT-based authentication
+- Bearer tokens for both HTTP and WebSocket connections
+- Role-based authorization (**USER**, **ADMIN**)
+
+### 💬 Realtime Messaging (WebSocket)
+- Socket.IO gateway for realtime communication
+- Channel-based messaging (`general`, `support`)
+- Access control enforced per channel
+- Events:
+  - `channel.join`
+  - `message.send`
+  - `message.new`
+  - `auth.ok` / `auth.error`
+
+### 🌐 REST API
+- List messages by channel with pagination
+- Admin-only moderation endpoints
+- JWT authentication via Authorization header
+
+### 🗄️ Database
+- PostgreSQL
+- Prisma ORM
+- Indexed message queries
+- Strongly typed schema (Role, ChannelKey)
+
+### 🛡️ Access Control
+- `support` channel restricted to ADMIN users
+- Admin-only endpoints for message deletion and channel flushing
+
+---
+
+## 🧱 Tech Stack
+
+- Node.js
+- NestJS
+- TypeScript
+- Socket.IO
+- Prisma ORM
+- PostgreSQL
+- Passport JWT
+- class-validator
+
+---
+
+## 📁 Project Structure
+
+```text
+src/
+├── messages/
+│   ├── messages.controller.ts   # REST endpoints (list, delete, flush)
+│   ├── messages.service.ts      # Business logic + DB access
+│   └── dto/
+│       └── list-messages.query.ts
+├── realtime/
+│   └── realtime.gateway.ts      # WebSocket gateway (Socket.IO)
+├── auth/
+│   └── jwt.strategy.ts          # JWT authentication strategy
+├── prisma/
+│   └── prisma.service.ts        # Prisma client service
+├── app.module.ts
+└── main.ts                      # Application entry point
+prisma/
+└── schema.prisma                # Message model + enums
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## ⚙️ Prerequisites
 
-# watch mode
-$ npm run start:dev
+Make sure you have installed:
 
-# production mode
-$ npm run start:prod
+- Node.js (v18+ recommended)
+- npm
+- PostgreSQL
+- Git
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env` file in the project root:
+
+```
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/DATABASE_NAME
+JWT_ACCESS_SECRET=your-secret-key
+PORT=3003
 ```
 
-## Run tests
+Notes:
+- `JWT_ACCESS_SECRET` must match the token issuer
+- If `PORT` is not set, the server defaults to **3003**
+
+---
+
+## 📦 Installation
+
+Clone the repository:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Install dependencies:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm install
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 🗄️ Database Setup (Prisma)
 
-Check out a few resources that may come in handy when working with NestJS:
+Generate Prisma Client:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+npx prisma generate
+```
 
-## Support
+Run database migrations:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npx prisma migrate dev --name init
+```
 
-## Stay in touch
+(Optional) Open Prisma Studio:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+npx prisma studio
+```
 
-## License
+---
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## ▶️ Running the Application
+
+Development mode:
+
+```bash
+npm run start
+```
+
+Watch mode:
+
+```bash
+npm run start:dev
+```
+
+Production mode:
+
+```bash
+npm run start:prod
+```
+
+Server runs on:
+
+```
+http://localhost:3003
+```
+
+---
+
+## 🧪 Testing with the Minimal CLI Socket Client
+
+This repository includes a minimal interactive CLI client (`test-client.js`) to test:
+- WebSocket authentication (JWT)
+- Channel join + realtime messaging (Socket.IO)
+- Message history (REST)
+- Admin moderation endpoints (REST)
+
+---
+
+### 1) Install client dependencies
+
+If you don't already have them installed in your project:
+
+```bash
+npm i socket.io-client node-fetch
+```
+
+---
+
+### 2) Set environment variables
+
+**Windows (cmd.exe):**
+```bat
+set TOKEN=<YOUR_JWT_ACCESS_TOKEN>
+set API_KEY=<YOUR_GATEWAY_API_KEY>
+set GW_URL=http://localhost:3000
+```
+
+**macOS / Linux (bash/zsh):**
+```bash
+export TOKEN=<YOUR_JWT_ACCESS_TOKEN>
+export API_KEY=<YOUR_GATEWAY_API_KEY>
+export GW_URL=http://localhost:3000
+```
+
+Notes:
+- `GW_URL` defaults to `http://localhost:3000` if not set.
+- The Socket.IO path is `/realtime/socket.io`.
+- REST endpoints are called under `/realtime/...` (e.g. `/realtime/messages?...`).
+
+---
+
+### 3) Run the client
+
+```bash
+node test-client.js
+```
+
+---
+
+### 4) Try commands
+
+```text
+join general
+send general hello world
+history general
+```
+
+If your JWT role is `ADMIN`, you can also run:
+
+```text
+flush general
+del <messageId>
+```
+
+---
+
+### Troubleshooting
+
+- If you see `auth.error`, verify `JWT_ACCESS_SECRET` on the server matches the issuer of your token.
+- If you get `connect_error`, confirm `GW_URL` and the Socket.IO path `/realtime/socket.io`.
+- If `support` access fails as USER, that's expected: the `support` channel is ADMIN-only.
+
+---
+
+## 🔑 Messaging Flow
+
+### WebSocket Connection
+1. Client connects with JWT (`auth.token` or `Authorization` header)
+2. Server validates token
+3. User receives `auth.ok` or `auth.error`
+
+### Join Channel
+```text
+channel.join { channel }
+```
+
+### Send Message
+```text
+message.send { channel, content }
+```
+
+### Broadcast
+- Messages are persisted to PostgreSQL
+- Broadcasted to all connected clients in the channel
+
+---
+
+## 📌 API Endpoints
+
+Messages:
+- `GET /messages?channel=general`
+- `DELETE /messages/:id` (ADMIN only)
+- `DELETE /messages/flush?channel=general` (ADMIN only)
+
+---
+
+## 🧠 Notes
+
+- Realtime layer is intentionally decoupled from Prisma enums
+- Channel access rules are enforced consistently in HTTP & WebSocket layers
+- Designed as a solid foundation for chat, support systems, or realtime dashboards
+
+---
+
+## 📄 License
+
+MIT License
